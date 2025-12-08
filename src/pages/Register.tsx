@@ -9,6 +9,7 @@ export const Register = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [role, setRole] = useState('patient');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -26,6 +27,7 @@ export const Register = () => {
                 uid: user.uid,
                 name,
                 email,
+                phoneNumber,
                 role,
                 createdAt: new Date().toISOString()
             });
@@ -69,6 +71,18 @@ export const Register = () => {
                             <Mail size={18} style={{ position: 'absolute', left: '12px', top: '12px', color: '#999' }} />
                             <input
                                 type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
+                                style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '8px', border: '1px solid #ddd' }}
+                            />
+                        </div>
+                    </div>
+
+                    <div>
+                        <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: '#666' }}>Phone Number *</label>
+                        <div style={{ position: 'relative' }}>
+                            <div style={{ position: 'absolute', left: '12px', top: '12px', color: '#999' }}>📞</div>
+                            <input
+                                type="tel" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} required
+                                placeholder="+91 98765 43210"
                                 style={{ width: '100%', padding: '0.75rem 0.75rem 0.75rem 2.5rem', borderRadius: '8px', border: '1px solid #ddd' }}
                             />
                         </div>

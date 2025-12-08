@@ -3,7 +3,7 @@ import { Calendar as CalendarIcon, CheckCircle, Bell, MapPin } from 'lucide-reac
 import { format } from 'date-fns';
 import { therapies } from '../data/therapies';
 import { db } from '../firebase';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
+import { collection, addDoc, getDocs, doc, getDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import { ResourceManager } from '../services/ResourceManager';
 import { NotificationService } from '../services/NotificationService';
@@ -83,6 +83,18 @@ export const Scheduler = () => {
 
         setIsBooking(true);
         try {
+            // Fetch User Profile for Phone Number
+            let patientPhone = '';
+            let patientName = currentUser.displayName || '';
+            try {
+                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    patientPhone = data.phoneNumber || '';
+                    patientName = data.name || data.displayName || patientName;
+                }
+            } catch (e) { console.warn("Could not fetch user profile", e); }
+
             const dateStr = selectedDate.toISOString();
             // 1. Intelligent Resource Allocation
             const room = await ResourceManager.autoAllocateRoom(dateStr);
@@ -101,6 +113,7 @@ export const Scheduler = () => {
             const appointmentRef = await addDoc(collection(db, 'appointments'), {
                 patientId: currentUser.uid,
                 patientEmail: currentUser.email,
+                patientPhone, // Save phone to appointment
                 therapyId: selectedTherapy,
                 date: dateStr,
                 centerId: selectedCenter.id,
@@ -119,7 +132,9 @@ export const Scheduler = () => {
             await NotificationService.scheduleNotifications({
                 id: appointmentRef.id,
                 therapyId: selectedTherapy,
-                date: dateStr
+                date: dateStr,
+                patientPhone,
+                patientName
             });
 
             setBookingComplete(true);

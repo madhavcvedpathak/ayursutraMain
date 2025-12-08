@@ -45,16 +45,19 @@ export const NotificationService = {
     },
 
     // Automated Scheduling Logic
-    scheduleNotifications: async (appointment: { id: string, therapyId: string, date: string, patientPhone?: string }) => {
+    scheduleNotifications: async (appointment: { id: string, therapyId: string, date: string, patientPhone?: string, patientName?: string }) => {
         console.log(`[System] Scheduling automated alerts for appointment ID: ${appointment.id}`);
 
         // Default phone if missing
         const phone = appointment.patientPhone || '+91-9876543210';
+        const name = appointment.patientName || 'Patient';
 
-        // 1. Pre-Procedure (Purvakarma) -> 12 hours before
-        const preMsg = NotificationService.generatePreProcedureMessage(appointment.therapyId, appointment.date);
-        await NotificationService.sendSMS(phone, preMsg);
-        console.log(`[Scheduler] Queued Purvakarma Alert`);
+        // 1. INSTANT: Booking Confirmation + Pre-Procedure Instructions
+        const preInstructions = NotificationService.generatePreProcedureMessage(appointment.therapyId, appointment.date);
+        const instantMsg = `Namaste ${name}. Booking Confirmed! ${preInstructions}`;
+
+        await NotificationService.sendSMS(phone, instantMsg);
+        console.log(`[Scheduler] Sent Instant Confirmation & Purvakarma Alert`);
 
         // 2. Post-Procedure (Paschatkarma) -> 4 hours after
         const postMsg = NotificationService.generatePostProcedureMessage(appointment.therapyId);
