@@ -36,8 +36,22 @@ export const Navigation = () => {
             alignItems: 'center',
             boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
         }}>
-            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <img src={logo} alt="Ayursutra Logo" style={{ height: '60px', objectFit: 'contain' }} />
+            <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <img src={logo} alt="Ayursutra Logo" style={{ height: '85px', objectFit: 'contain' }} />
+                <h1 style={{
+                    fontFamily: '"Cormorant Garamond", serif',
+                    fontSize: '3rem',
+                    fontWeight: 700,
+                    margin: 0,
+                    letterSpacing: '0.02em',
+                    color: '#2c3e50', // Dark premium color
+                    background: 'linear-gradient(45deg, #1b5e20, #2e7d32)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                    Ayursutra
+                </h1>
             </Link>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
