@@ -20,28 +20,42 @@ export interface Notification {
 }
 
 export const NotificationService = {
-    // Mocking an SMS Gateway (Twilio)
+    // Twilio Backend Integration
     sendSMS: async (phoneNumber: string, message: string): Promise<{ success: boolean; sid?: string }> => {
-        console.log(`[Twilio Auto-Dispatch] Sending to ${phoneNumber}: ${message}`);
+        console.log(`[NotificationService] Requesting SMS to ${phoneNumber} via Backend...`);
 
-        // Persist "Sent" SMS to DB for records
         try {
+            const response = await fetch('http://localhost:3001/api/send-sms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ to: phoneNumber, body: message })
+            });
+
+            const data = await response.json();
+
+            // Log attempt to Firestore regardless of backend success for audit
             await addDoc(collection(db, 'sms_logs'), {
                 phoneNumber,
                 message,
-                status: 'Sent',
-                provider: 'Twilio-Mock',
-                timestamp: new Date().toISOString()
+                status: data.success ? 'Sent' : 'Failed',
+                provider: 'Twilio-Backend',
+                timestamp: new Date().toISOString(),
+                sid: data.sid || null,
+                error: data.error || null
             });
-        } catch (e) {
-            console.error("Failed to log SMS", e);
-        }
 
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve({ success: true, sid: 'SM' + Math.random().toString(36).substr(2, 9) });
-            }, 500);
-        });
+            if (data.success) {
+                console.log(`[NotificationService] SMS Dispatch Success! SID: ${data.sid}`);
+                return { success: true, sid: data.sid };
+            } else {
+                console.error(`[NotificationService] SMS Dispatch Failed: ${data.error}`);
+                return { success: false };
+            }
+
+        } catch (e: any) {
+            console.error("[NotificationService] Connection to SMS Server failed", e);
+            return { success: false };
+        }
     },
 
     // Automated Scheduling Logic
