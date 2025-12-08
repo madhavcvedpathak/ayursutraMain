@@ -67,7 +67,11 @@ export const NotificationService = {
         console.log(`[System] Scheduling automated alerts for appointment ID: ${appointment.id}`);
 
         // Default phone if missing
-        const phone = appointment.patientPhone || '+91-9876543210';
+        const phone = appointment.patientPhone;
+        if (!phone || phone.length < 5) {
+            console.error('[NotificationService] Skipping SMS. No valid phone number provided.');
+            return false;
+        }
         const name = appointment.patientName || 'Patient';
 
         // 1. INSTANT: Booking Confirmation + Pre-Procedure Instructions

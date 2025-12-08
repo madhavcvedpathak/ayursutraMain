@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar as CalendarIcon, CheckCircle, Bell, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 import { therapies } from '../data/therapies';
@@ -30,6 +30,9 @@ export const Scheduler = () => {
     const [selectedCenter, setSelectedCenter] = useState<Center | null>(null);
     const [centers, setCenters] = useState<Center[]>([]);
 
+    // Patient Details State
+    const [patientPhone, setPatientPhone] = useState('');
+
     // Processing State
     const [isLoadingCenters, setIsLoadingCenters] = useState(false);
     const [isBooking, setIsBooking] = useState(false);
@@ -39,6 +42,24 @@ export const Scheduler = () => {
     const [allocatedRoom, setAllocatedRoom] = useState<{ roomId: string, roomName: string } | null>(null);
     const [allocatedTherapist, setAllocatedTherapist] = useState<{ name: string, specialization: string } | null>(null);
     const [lastAppointmentId, setLastAppointmentId] = useState<string>('');
+
+    // Fetch User Phone on Mount
+    useEffect(() => {
+        const fetchUserPhone = async () => {
+            if (currentUser) {
+                try {
+                    const docRef = doc(db, 'users', currentUser.uid);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        setPatientPhone(docSnap.data().phoneNumber || '');
+                    }
+                } catch (e) {
+                    console.error("Error fetching phone", e);
+                }
+            }
+        };
+        fetchUserPhone();
+    }, [currentUser]);
 
     // Fetch Centers and Calculate Distance when entering Step 2
     const handleFindCenters = async () => {
@@ -81,20 +102,13 @@ export const Scheduler = () => {
     const handleFinalBooking = async () => {
         if (!currentUser || !selectedCenter || !selectedDate) return;
 
+        if (!patientPhone || patientPhone.length < 10) {
+            alert("Please provide a valid phone number for appointment updates.");
+            return;
+        }
+
         setIsBooking(true);
         try {
-            // Fetch User Profile for Phone Number
-            let patientPhone = '';
-            let patientName = currentUser.displayName || '';
-            try {
-                const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-                if (userDoc.exists()) {
-                    const data = userDoc.data();
-                    patientPhone = data.phoneNumber || '';
-                    patientName = data.name || data.displayName || patientName;
-                }
-            } catch (e) { console.warn("Could not fetch user profile", e); }
-
             const dateStr = selectedDate.toISOString();
             // 1. Intelligent Resource Allocation
             const room = await ResourceManager.autoAllocateRoom(dateStr);
@@ -113,7 +127,7 @@ export const Scheduler = () => {
             const appointmentRef = await addDoc(collection(db, 'appointments'), {
                 patientId: currentUser.uid,
                 patientEmail: currentUser.email,
-                patientPhone, // Save phone to appointment
+                patientPhone: patientPhone,
                 therapyId: selectedTherapy,
                 date: dateStr,
                 centerId: selectedCenter.id,
@@ -133,8 +147,8 @@ export const Scheduler = () => {
                 id: appointmentRef.id,
                 therapyId: selectedTherapy,
                 date: dateStr,
-                patientPhone,
-                patientName
+                patientPhone: patientPhone,
+                patientName: currentUser.displayName || 'Patient'
             });
 
             setBookingComplete(true);
@@ -151,6 +165,10 @@ export const Scheduler = () => {
             <div className="premium-card" style={{ padding: '3rem', textAlign: 'center', animation: 'fadeIn 0.5s ease-out' }}>
                 <CheckCircle size={64} color="var(--color-primary)" style={{ margin: '0 auto 1.5rem auto' }} />
                 <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.75rem', marginBottom: '1rem' }}>Booking Confirmed</h3>
+
+                <p className="text-gray-600 mb-6">
+                    A confirmation SMS has been sent to <strong>{patientPhone}</strong>.
+                </p>
 
                 <div style={{ background: '#f8f9fa', padding: '1.5rem', borderRadius: '12px', textAlign: 'left', margin: '2rem 0', border: '1px solid #eee' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
@@ -257,8 +275,22 @@ export const Scheduler = () => {
                 <div style={{ animation: 'fadeIn 0.3s', padding: '1.5rem' }}>
                     <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <MapPin size={24} color="var(--color-primary)" />
-                        Step 2: Select Center
+                        Step 2: Select Center & Confirm
                     </h3>
+
+                    {/* PHONE INPUT SECTION */}
+                    <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                        <label className="block text-sm font-semibold text-brand-deep mb-2">Confirm Phone for SMS Alerts</label>
+                        <input
+                            type="tel"
+                            value={patientPhone}
+                            onChange={(e) => setPatientPhone(e.target.value)}
+                            placeholder="+91 99999 99999"
+                            className="w-full p-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-brand-teal focus:border-transparent outline-none"
+                        />
+                        <p className="text-xs text-gray-500 mt-1">We will send booking confirmation and pre-procedure instructions here.</p>
+                    </div>
+
                     <p style={{ color: '#666', marginBottom: '2rem' }}>Showing centers nearest to your detected location.</p>
 
                     {isLoadingCenters ? (
@@ -307,9 +339,9 @@ export const Scheduler = () => {
                         </button>
                         <button
                             onClick={handleFinalBooking}
-                            disabled={!selectedCenter || isBooking}
-                            className="btn-primary"
-                            style={{ flex: 2, padding: '1rem', fontSize: '1.05rem', opacity: (!selectedCenter || isBooking) ? 0.7 : 1 }}
+                            disabled={!selectedCenter || isBooking || !patientPhone}
+                            className="btn primary"
+                            style={{ flex: 2, padding: '1rem', fontSize: '1.05rem', opacity: (!selectedCenter || isBooking || !patientPhone) ? 0.7 : 1 }}
                         >
                             {isBooking ? 'Processing...' : 'Confirm Booking'}
                         </button>
