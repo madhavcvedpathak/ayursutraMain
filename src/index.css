@@ -48,20 +48,26 @@
       @apply mb-2 block text-[0.75rem] uppercase tracking-[0.2em] text-brand-muted;
    }
 
+   ::selection {
+      @apply bg-brand-teal/30 text-brand-deep;
+   }
+
    .btn {
-      @apply inline-flex items-center justify-center rounded-full border border-transparent px-6 py-3 font-semibold text-sm tracking-wide text-brand-deep shadow-brand transition-all duration-200 hover:-translate-y-0.5 cursor-pointer;
+      @apply inline-flex items-center justify-center rounded-full border border-transparent px-8 py-3 font-semibold text-sm tracking-widest uppercase transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed;
+      font-family: 'Open Sans', sans-serif;
    }
 
    .btn.primary {
-      @apply bg-brand-teal text-white hover:bg-brand-ocean;
+      background: linear-gradient(135deg, #2c3e2d 0%, #354f36 100%);
+      @apply text-white shadow-lg shadow-brand-deep/20 hover:shadow-xl hover:shadow-brand-deep/30 border border-white/10;
    }
 
    .btn.ghost {
-      @apply border border-brand-deep/15 bg-white/70 text-brand-deep;
+      @apply bg-transparent text-brand-deep hover:bg-brand-deep/5;
    }
 
    .btn.outline {
-      @apply border border-brand-deep text-brand-deep bg-[#f4f3e8];
+      @apply border-2 border-brand-deep text-brand-deep bg-transparent hover:bg-brand-deep hover:text-white;
    }
 
    .landing-hero {
