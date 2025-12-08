@@ -7,10 +7,36 @@ export interface Notification {
     scheduledTime: string;
 }
 
+import { db } from '../firebase';
+import { collection, addDoc } from 'firebase/firestore';
+
+export interface Notification {
+    id: string;
+    patientId: string;
+    type: 'Purvakarma Alert' | 'Paschatkarma Alert' | 'Booking Confirmation';
+    message: string;
+    status: 'Scheduled' | 'Sent' | 'Failed';
+    scheduledTime: string;
+}
+
 export const NotificationService = {
     // Mocking an SMS Gateway (Twilio)
     sendSMS: async (phoneNumber: string, message: string): Promise<{ success: boolean; sid?: string }> => {
         console.log(`[Twilio Auto-Dispatch] Sending to ${phoneNumber}: ${message}`);
+
+        // Persist "Sent" SMS to DB for records
+        try {
+            await addDoc(collection(db, 'sms_logs'), {
+                phoneNumber,
+                message,
+                status: 'Sent',
+                provider: 'Twilio-Mock',
+                timestamp: new Date().toISOString()
+            });
+        } catch (e) {
+            console.error("Failed to log SMS", e);
+        }
+
         return new Promise((resolve) => {
             setTimeout(() => {
                 resolve({ success: true, sid: 'SM' + Math.random().toString(36).substr(2, 9) });
@@ -19,16 +45,29 @@ export const NotificationService = {
     },
 
     // Automated Scheduling Logic
-    scheduleNotifications: async (appointment: any) => {
+    scheduleNotifications: async (appointment: { id: string, therapyId: string, date: string, patientPhone?: string }) => {
         console.log(`[System] Scheduling automated alerts for appointment ID: ${appointment.id}`);
+
+        // Default phone if missing
+        const phone = appointment.patientPhone || '+91-9876543210';
 
         // 1. Pre-Procedure (Purvakarma) -> 12 hours before
         const preMsg = NotificationService.generatePreProcedureMessage(appointment.therapyId, appointment.date);
-        console.log(`[Scheduler] Queued Purvakarma Alert: "${preMsg}"`);
+        await NotificationService.sendSMS(phone, preMsg);
+        console.log(`[Scheduler] Queued Purvakarma Alert`);
 
         // 2. Post-Procedure (Paschatkarma) -> 4 hours after
         const postMsg = NotificationService.generatePostProcedureMessage(appointment.therapyId);
-        console.log(`[Scheduler] Queued Paschatkarma Alert: "${postMsg}"`);
+        // In a real system, this would be scheduled. Here we just log it as "Scheduled"
+        try {
+            await addDoc(collection(db, 'scheduled_notifications'), {
+                appointmentId: appointment.id,
+                type: 'Post-Procedure',
+                message: postMsg,
+                scheduledFor: new Date(new Date(appointment.date).getTime() + 4 * 60 * 60 * 1000).toISOString(),
+                status: 'Pending'
+            });
+        } catch (e) { console.error(e) }
 
         return true;
     },

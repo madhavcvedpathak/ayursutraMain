@@ -71,7 +71,7 @@ export const Home = () => {
                 </div>
 
                 <div className="landing-grid">
-                    {therapies.map((therapy) => (
+                    {therapies.map((therapy, i) => (
                         <motion.div
                             key={therapy.id}
                             whileHover={{ y: -4 }}
@@ -79,7 +79,17 @@ export const Home = () => {
                             style={{ padding: 0 }}
                         >
                             <div className="relative h-48 overflow-hidden">
-                                <img src={therapy.imageUrl} alt={therapy.name} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                                <img
+                                    src={
+                                        i === 0 ? "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=1000&auto=format&fit=crop" : // Massage
+                                            i === 1 ? "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=1000&auto=format&fit=crop" : // Relax
+                                                i === 2 ? "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?q=80&w=1000&auto=format&fit=crop" : // Nature
+                                                    i === 3 ? "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=1000&auto=format&fit=crop" : // Oil
+                                                        "https://images.unsplash.com/photo-1576013551627-0cc20b46850e?q=80&w=1000&auto=format&fit=crop" // Vamana default
+                                    }
+                                    alt={therapy.name}
+                                    className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
+                                />
                                 <div className="absolute bottom-3 right-3 rounded-lg bg-white/90 px-3 py-1 text-xs font-semibold backdrop-blur-sm">
                                     {therapy.duration.split(' ')[0]} Mins
                                 </div>

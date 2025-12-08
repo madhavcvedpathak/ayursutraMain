@@ -1,7 +1,24 @@
 import { Users, DollarSign, Activity, Settings as SettingsIcon, MapPin } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { db } from '../firebase';
+import { collection, query, limit, getDocs } from 'firebase/firestore';
 
 export const AdminPortal = () => {
+    const [smsLogs, setSmsLogs] = useState<any[]>([]);
+
+    useEffect(() => {
+        const fetchLogs = async () => {
+            try {
+                const logs = await getDocs(query(collection(db, 'sms_logs'), limit(5)));
+                setSmsLogs(logs.docs.map(doc => doc.data()));
+            } catch (e) {
+                console.error("Error fetching SMS logs", e);
+            }
+        };
+        fetchLogs();
+    }, []);
+
     return (
         <div className="app-shell">
             <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
@@ -52,19 +69,36 @@ export const AdminPortal = () => {
                     </div>
                 </div>
 
-                <div className="premium-card">
-                    <h3 className="mb-6 text-xl font-semibold">Recent Alerts</h3>
-                    <div className="space-y-4">
-                        {[
-                            { msg: "New practitioner registration pending approval", time: "2h ago", type: "info" },
-                            { msg: "High volume of Basti bookings for next week", time: "5h ago", type: "warning" },
-                            { msg: "System maintenance scheduled for Sunday", time: "1d ago", type: "info" },
-                        ].map((alert, i) => (
-                            <div key={i} className={`rounded-xl border-l-4 p-4 ${alert.type === 'warning' ? 'border-orange-400 bg-orange-50' : 'border-blue-400 bg-blue-50'}`}>
-                                <p className="mb-2 text-sm font-medium text-brand-deep">{alert.msg}</p>
-                                <span className="text-xs text-brand-muted">{alert.time}</span>
-                            </div>
-                        ))}
+                <div className="flex flex-col gap-6">
+                    <div className="premium-card">
+                        <h3 className="mb-6 text-xl font-semibold">Recent SMS Dispatches (Live)</h3>
+                        <div className="space-y-4">
+                            {smsLogs.length > 0 ? smsLogs.map((log, i) => (
+                                <div key={i} className="rounded-xl border-l-4 border-green-500 bg-green-50 p-4">
+                                    <p className="mb-1 text-sm font-medium text-brand-deep">To: {log.phoneNumber}</p>
+                                    <p className="text-xs text-brand-muted truncate">{log.message}</p>
+                                    <span className="text-[10px] uppercase tracking-wide text-green-700">Sent • {new Date(log.timestamp).toLocaleTimeString()}</span>
+                                </div>
+                            )) : (
+                                <div className="text-sm text-gray-400 italic">No recent SMS logs found.</div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="premium-card">
+                        <h3 className="mb-6 text-xl font-semibold">Recent Alerts</h3>
+                        <div className="space-y-4">
+                            {[
+                                { msg: "New practitioner registration pending approval", time: "2h ago", type: "info" },
+                                { msg: "High volume of Basti bookings for next week", time: "5h ago", type: "warning" },
+                                { msg: "System maintenance scheduled for Sunday", time: "1d ago", type: "info" },
+                            ].map((alert, i) => (
+                                <div key={i} className={`rounded-xl border-l-4 p-4 ${alert.type === 'warning' ? 'border-orange-400 bg-orange-50' : 'border-blue-400 bg-blue-50'}`}>
+                                    <p className="mb-2 text-sm font-medium text-brand-deep">{alert.msg}</p>
+                                    <span className="text-xs text-brand-muted">{alert.time}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
