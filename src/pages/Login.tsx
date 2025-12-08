@@ -71,7 +71,7 @@ export const Login = () => {
                         </div>
                     </div>
 
-                    <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>Sign In</button>
+                    <button type="submit" className="btn primary" style={{ width: '100%', marginTop: '1rem' }}>Sign In</button>
 
                     <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.9rem' }}>
                         Don't have an account? <Link to="/register" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Register</Link>

@@ -129,7 +129,7 @@ export const Register = () => {
                         </div>
                     </div>
 
-                    <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', marginTop: '1rem', opacity: loading ? 0.7 : 1 }}>
+                    <button type="submit" disabled={loading} className="btn primary" style={{ width: '100%', marginTop: '1rem', opacity: loading ? 0.7 : 1 }}>
                         {loading ? 'Creating Account...' : 'Register'}
                     </button>
 
