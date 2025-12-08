@@ -1,0 +1,6 @@
+@import './styles/theme.css';
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+/* Tailwind directives if we were using it, but we are using custom CSS for now as requested for vanilla control, 
+   though I installed framer-motion for animations. 
+   Actually, I can just keep this clean. */

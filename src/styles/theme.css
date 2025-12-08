@@ -1,0 +1,68 @@
+:root {
+  /* Premium Ayurvedic Palette */
+  --color-primary: #5c7c51; /* Deep Sage Green */
+  --color-primary-light: #8da383;
+  --color-secondary: #c4a484; /* Soft Earth/Gold */
+  --color-cream: #f9f7f2; /* Warm Off-White Background */
+  --color-text-main: #2c3e2d; /* Dark Forest Green for text */
+  --color-text-light: #5f6f60;
+  --color-accent: #d4af37; /* Muted Gold for highlights */
+  --color-error: #b33939;
+
+  /* Typography */
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+
+  /* Spacing */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 1rem;
+  --spacing-md: 2rem;
+  --spacing-lg: 4rem;
+
+  /* Shadows */
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.08);
+}
+
+body {
+  background-color: var(--color-cream);
+  color: var(--color-text-main);
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.premium-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #4a6640;
+}
