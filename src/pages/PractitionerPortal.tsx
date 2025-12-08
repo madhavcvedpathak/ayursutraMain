@@ -2,16 +2,17 @@ import { useState, useEffect } from 'react';
 import { Calendar, Clipboard, LayoutDashboard, MapPin, MessageCircle, Send } from 'lucide-react';
 import { MonthlyTreatmentChart, TreatmentDistributionChart } from '../components/ReportCharts';
 import { db } from '../firebase';
-import { collection, query, getDocs, orderBy, limit } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy, limit, onSnapshot } from 'firebase/firestore';
 import { NotificationService } from '../services/NotificationService';
 import { ResourceManager, THERAPY_ROOMS } from '../services/ResourceManager';
 
 export const PractitionerPortal = () => {
     const [selectedPatient, setSelectedPatient] = useState<number | null>(null);
-    const [activeTab, setActiveTab] = useState<'schedule' | 'analytics' | 'center'>('center'); // Default to Center for demo
+    const [activeTab, setActiveTab] = useState<'schedule' | 'analytics' | 'center'>('center');
     const [dailyFeedback, setDailyFeedback] = useState<any[]>([]);
     const [occupancy, setOccupancy] = useState(0);
     const [smsStatus, setSmsStatus] = useState<string>('');
+    const [appointments, setAppointments] = useState<any[]>([]);
 
     // Fetch Feedback & Occupancy
     useEffect(() => {
@@ -35,11 +36,27 @@ export const PractitionerPortal = () => {
         fetchOccupancy();
     }, []);
 
+    // Real-time Appointments
+    useEffect(() => {
+        const q = query(collection(db, 'appointments'), orderBy('date', 'asc'));
+        const unsubscribe = onSnapshot(q, (snapshot: any) => {
+            const appts = snapshot.docs.map((doc: any) => ({
+                id: doc.id,
+                ...doc.data(),
+                patient: doc.data().patientName || 'Unknown Patient',
+                therapy: doc.data().therapyId || 'Consultation',
+                time: doc.data().time || '09:00 AM',
+                room: doc.data().room || 'Waiting Area'
+            }));
+            setAppointments(appts);
+        });
+        return () => unsubscribe();
+    }, []);
+
     const handleSendSMS = async (type: 'pre' | 'post') => {
         if (!selectedPatient) return;
         setSmsStatus('Sending...');
 
-        // Mock Patient Phone
         const message = type === 'pre'
             ? NotificationService.generatePreProcedureMessage('Vamana', 'Tomorrow')
             : NotificationService.generatePostProcedureMessage('Vamana');
@@ -51,13 +68,6 @@ export const PractitionerPortal = () => {
             setTimeout(() => setSmsStatus(''), 3000);
         }
     };
-
-    // Mock appointments 
-    const appointments = [
-        { id: 1, patient: "Arjun Kumar", therapy: "Vamana", time: "09:00 AM", status: "Scheduled", room: "Dhanvantari Hall A" },
-        { id: 2, patient: "Sarah Williams", therapy: "Nasya", time: "11:30 AM", status: "In Progress", room: "Sushruta Suite" },
-        { id: 3, patient: "Rajesh Singh", therapy: "Basti", time: "02:00 PM", status: "Completed", room: "Charaka Chamber" }
-    ];
 
     return (
         <div style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto' }}>
@@ -88,7 +98,6 @@ export const PractitionerPortal = () => {
             {activeTab === 'center' && (
                 <div style={{ animation: 'fadeIn 0.3s ease-in' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '2rem' }}>
-
                         {/* Map / Grid */}
                         <div className="premium-card" style={{ padding: '2rem' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem' }}>
@@ -98,7 +107,6 @@ export const PractitionerPortal = () => {
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><div style={{ width: '12px', height: '12px', background: '#ffa726', borderRadius: '50%' }}></div> In Use</div>
                                 </div>
                             </div>
-
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem' }}>
                                 {THERAPY_ROOMS.map(room => (
                                     <div key={room.id} style={{
@@ -110,7 +118,6 @@ export const PractitionerPortal = () => {
                                     }}>
                                         <div style={{ fontWeight: 600, fontSize: '1.1rem', marginBottom: '0.5rem' }}>{room.name}</div>
                                         <div style={{ fontSize: '0.9rem', color: '#666' }}>{room.type} Suite • Cap: {room.capacity}</div>
-
                                         {appointments.find(a => a.room === room.name && a.status === 'In Progress') && (
                                             <div style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#ef6c00', fontSize: '0.9rem', fontWeight: 500 }}>
                                                 <div style={{ width: '8px', height: '8px', background: '#ef6c00', borderRadius: '50%', animation: 'pulse 1.5s infinite' }}></div>
@@ -128,7 +135,6 @@ export const PractitionerPortal = () => {
                                 <div style={{ fontSize: '3rem', fontWeight: 700 }}>{occupancy}%</div>
                                 <div style={{ opacity: 0.9 }}>Current Occupancy</div>
                             </div>
-
                             <div className="premium-card" style={{ padding: '1.5rem' }}>
                                 <h4>Alerts</h4>
                                 <div style={{ fontSize: '0.9rem', color: '#666', marginTop: '1rem' }}>
@@ -179,7 +185,6 @@ export const PractitionerPortal = () => {
                             <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Today's Queue</h3>
                             <Calendar size={20} color="var(--color-primary)" />
                         </div>
-
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {appointments.map(apt => (
                                 <div
@@ -197,6 +202,9 @@ export const PractitionerPortal = () => {
                                     <div style={{ fontSize: '0.8rem', opacity: 0.8 }}>{apt.therapy} • {apt.time}</div>
                                 </div>
                             ))}
+                            {appointments.length === 0 && (
+                                <div style={{ textAlign: 'center', padding: '1rem', color: '#999' }}>No patients scheduled.</div>
+                            )}
                         </div>
                     </div>
 
@@ -210,11 +218,9 @@ export const PractitionerPortal = () => {
                                         {appointments.find(a => a.id === selectedPatient)?.status}
                                     </div>
                                 </div>
-
                                 <h4 style={{ marginBottom: '1rem', color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                                     <MessageCircle size={18} /> Automated Notifications
                                 </h4>
-
                                 <div style={{ background: '#fcfcfc', border: '1px solid #eee', borderRadius: '8px', padding: '1.5rem', marginBottom: '1rem' }}>
                                     <div style={{ display: 'flex', gap: '1rem', marginBottom: '1rem' }}>
                                         <button

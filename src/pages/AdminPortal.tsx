@@ -30,7 +30,19 @@ export const AdminPortal = () => {
                     <Link to="/register-center" className="btn outline flex items-center gap-2">
                         <MapPin size={18} /> Add Center
                     </Link>
-                    <button className="btn primary">Download Reports</button>
+                    import {PDFService} from '../services/PDFService';
+
+                    // ... inside AdminPortal
+                    <button
+                        onClick={() => PDFService.generateSystemReport({
+                            totalPatients: '1,248',
+                            activeTherapies: '86',
+                            revenue: '$45.2k'
+                        })}
+                        className="btn primary"
+                    >
+                        Download Reports
+                    </button>
                 </div>
             </div>
 

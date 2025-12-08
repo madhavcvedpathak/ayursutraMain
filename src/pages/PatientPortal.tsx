@@ -26,9 +26,18 @@ export const PatientPortal = () => {
             // 1. Appointments
             const qAppt = query(collection(db, 'appointments'), where('patientId', '==', currentUser.uid));
             const apptSnapshot = await getDocs(qAppt);
+            import { therapies } from '../data/therapies';
+
+            // ... inside PatientPortal
             if (!apptSnapshot.empty) {
                 const data = apptSnapshot.docs[0].data();
-                setBookedTherapy({ id: apptSnapshot.docs[0].id, name: data.therapyId || 'Consultation', date: data.date, status: data.status });
+                const therapyDetails = therapies.find(t => t.id === data.therapyId);
+                setBookedTherapy({
+                    id: apptSnapshot.docs[0].id,
+                    name: therapyDetails ? therapyDetails.sanskritName : (data.therapyId || 'Consultation'),
+                    date: data.date,
+                    status: data.status
+                });
             }
 
             // 2. Feedback History
