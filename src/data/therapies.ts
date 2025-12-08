@@ -130,5 +130,29 @@ export const therapies: Therapy[] = [
             'Avoid getting the area wet for 24 hours'
         ],
         imageUrl: 'https://images.unsplash.com/photo-1579126038374-6064e9370f0f?auto=format&fit=crop&q=80&w=1000'
+    },
+    {
+        id: 'vamana',
+        name: 'Therapeutic Emesis (Vamana)',
+        sanskritName: 'Vamana Karma',
+        description: 'A controlled emesis therapy to expel Kapha toxins. Effective for respiratory and skin disorders.',
+        duration: '60-90 Minutes (Procedure)',
+        benefits: [
+            'Clears sinus & respiratory congestion',
+            'Treats chronic allergies & asthma',
+            'Detoxifies accumulated Kapha',
+            'Improves skin health (Psoriasis/Eczema)'
+        ],
+        imageUrl: 'https://images.unsplash.com/photo-1544367563-12123d8965cd?auto=format&fit=crop&q=80&w=2070',
+        preProcedure: [
+            '3-7 Days of Snehana (Ghee consumption) required.',
+            'Kapha-aggravating diet prior to procedure.',
+            'Mental preparation.'
+        ],
+        postProcedure: [
+            'Strict Samsarjana Krama (liquid diet transition).',
+            'Avoid cold exposure.',
+            'Complete rest.'
+        ]
     }
 ];

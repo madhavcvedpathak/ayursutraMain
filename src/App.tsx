@@ -10,6 +10,7 @@ import { Profile } from './pages/Profile';
 import { Navigation } from './components/Navigation';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { Chatbot } from './components/Chatbot';
 
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <Chatbot />
       </div>
     </AuthProvider>
   );

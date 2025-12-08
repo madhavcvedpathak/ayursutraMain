@@ -1,61 +1,68 @@
-import { Users, DollarSign, Activity, Settings as SettingsIcon } from 'lucide-react';
+import { Users, DollarSign, Activity, Settings as SettingsIcon, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const AdminPortal = () => {
     return (
-        <div style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-                <h2 style={{ fontFamily: 'var(--font-serif)', margin: 0 }}>Administrator Console</h2>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                    <button className="btn-primary" style={{ background: '#333' }}>Download Reports</button>
+        <div className="app-shell">
+            <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <span className="eyebrow">Administration</span>
+                    <h2 className="text-3xl font-semibold">Administrator Console</h2>
+                </div>
+                <div className="flex gap-4">
+                    <Link to="/register-center" className="btn outline flex items-center gap-2">
+                        <MapPin size={18} /> Add Center
+                    </Link>
+                    <button className="btn primary">Download Reports</button>
                 </div>
             </div>
 
             {/* KPI Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem', marginBottom: '3rem' }}>
+            <div className="mb-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {[
-                    { label: 'Total Patients', value: '1,248', icon: Users, color: '#1565c0', bg: '#e3f2fd' },
-                    { label: 'Active Therapies', value: '86', icon: Activity, color: '#2e7d32', bg: '#e8f5e9' },
-                    { label: 'Revenue (Monthly)', value: '$45.2k', icon: DollarSign, color: '#ef6c00', bg: '#fff3e0' },
-                    { label: 'System Health', value: '98%', icon: SettingsIcon, color: '#6a1b9a', bg: '#f3e5f5' },
+                    { label: 'Total Patients', value: '1,248', icon: Users, color: 'text-brand-ocean', bg: 'bg-brand-sage' },
+                    { label: 'Active Therapies', value: '86', icon: Activity, color: 'text-brand-teal', bg: 'bg-[#e8f5e9]' },
+                    { label: 'Revenue (Monthly)', value: '$45.2k', icon: DollarSign, color: 'text-orange-600', bg: 'bg-orange-50' },
+                    { label: 'System Health', value: '98%', icon: SettingsIcon, color: 'text-purple-600', bg: 'bg-purple-50' },
                 ].map((kpi, i) => (
-                    <div key={i} className="premium-card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                        <div style={{ width: '50px', height: '50px', borderRadius: '12px', background: kpi.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <kpi.icon color={kpi.color} size={24} />
+                    <div key={i} className="premium-card flex items-center gap-4">
+                        <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${kpi.bg}`}>
+                            <kpi.icon className={kpi.color} size={24} />
                         </div>
                         <div>
-                            <div style={{ fontSize: '0.9rem', color: '#666', marginBottom: '0.25rem' }}>{kpi.label}</div>
-                            <div style={{ fontSize: '1.5rem', fontWeight: 700, color: '#333' }}>{kpi.value}</div>
+                            <div className="text-sm text-brand-muted">{kpi.label}</div>
+                            <div className="text-2xl font-bold text-brand-deep">{kpi.value}</div>
                         </div>
                     </div>
                 ))}
             </div>
 
             {/* Main Content Area */}
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '2rem' }}>
-                <div className="premium-card" style={{ padding: '2rem' }}>
-                    <h3 style={{ marginBottom: '1.5rem' }}>Therapy Utilization</h3>
-                    <div style={{ height: '300px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', paddingBottom: '1rem', borderBottom: '1px solid #eee' }}>
+            <div className="grid gap-8 lg:grid-cols-3">
+                <div className="premium-card lg:col-span-2">
+                    <h3 className="mb-6 text-xl font-semibold">Therapy Utilization</h3>
+                    <div className="flex h-[300px] items-end justify-around border-b border-brand-deep/10 pb-4">
                         {/* Mock Bar Chart */}
                         {[65, 45, 80, 55, 30].map((h, i) => (
-                            <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
-                                <div style={{ width: '40px', height: `${h}%`, background: 'var(--color-primary)', borderRadius: '4px 4px 0 0', opacity: 0.8 }}></div>
-                                <span style={{ fontSize: '0.8rem', color: '#666' }}>{['Vamana', 'Vire', 'Basti', 'Nasya', 'Rakta'][i]}</span>
+                            <div key={i} className="flex flex-col items-center gap-2">
+                                <div style={{ height: `${h}%` }} className="w-10 rounded-t-md bg-brand-teal/80 transition-all hover:bg-brand-teal"></div>
+                                <span className="text-xs text-brand-muted">{['Vamana', 'Vire', 'Basti', 'Nasya', 'Rakta'][i]}</span>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                <div className="premium-card" style={{ padding: '2rem' }}>
-                    <h3 style={{ marginBottom: '1.5rem' }}>Recent Alerts</h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div className="premium-card">
+                    <h3 className="mb-6 text-xl font-semibold">Recent Alerts</h3>
+                    <div className="space-y-4">
                         {[
                             { msg: "New practitioner registration pending approval", time: "2h ago", type: "info" },
                             { msg: "High volume of Basti bookings for next week", time: "5h ago", type: "warning" },
                             { msg: "System maintenance scheduled for Sunday", time: "1d ago", type: "info" },
                         ].map((alert, i) => (
-                            <div key={i} style={{ padding: '1rem', background: '#f9f9f9', borderRadius: '8px', borderLeft: `3px solid ${alert.type === 'warning' ? '#ff9800' : '#2196f3'}` }}>
-                                <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>{alert.msg}</p>
-                                <span style={{ fontSize: '0.75rem', color: '#999' }}>{alert.time}</span>
+                            <div key={i} className={`rounded-xl border-l-4 p-4 ${alert.type === 'warning' ? 'border-orange-400 bg-orange-50' : 'border-blue-400 bg-blue-50'}`}>
+                                <p className="mb-2 text-sm font-medium text-brand-deep">{alert.msg}</p>
+                                <span className="text-xs text-brand-muted">{alert.time}</span>
                             </div>
                         ))}
                     </div>

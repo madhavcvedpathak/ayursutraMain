@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Calendar as CalendarIcon, CheckCircle, Bell, MapPin, Zap } from 'lucide-react';
+import { Calendar as CalendarIcon, CheckCircle, Bell, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 import { therapies } from '../data/therapies';
 import { db } from '../firebase';
@@ -9,6 +9,7 @@ import { ResourceManager } from '../services/ResourceManager';
 import { NotificationService } from '../services/NotificationService';
 import { PDFService } from '../services/PDFService';
 import { calculateDistance, getUserLocation } from '../utils/geo';
+import { Calendar } from './Calendar';
 
 interface Center {
     id: string;
@@ -25,7 +26,7 @@ export const Scheduler = () => {
     // Booking Flow State
     const [step, setStep] = useState(1); // 1: Therapy/Date -> 2: Center -> 3: Confirmation
     const [selectedTherapy, setSelectedTherapy] = useState(therapies[0].id);
-    const [selectedDate, setSelectedDate] = useState<string>('');
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [selectedCenter, setSelectedCenter] = useState<Center | null>(null);
     const [centers, setCenters] = useState<Center[]>([]);
 
@@ -42,7 +43,7 @@ export const Scheduler = () => {
     // Fetch Centers and Calculate Distance when entering Step 2
     const handleFindCenters = async () => {
         if (!selectedDate) {
-            alert('Please select a date first.');
+            alert('Please select a preferred date for your therapy.');
             return;
         }
         setIsLoadingCenters(true);
@@ -78,12 +79,13 @@ export const Scheduler = () => {
     };
 
     const handleFinalBooking = async () => {
-        if (!currentUser || !selectedCenter) return;
+        if (!currentUser || !selectedCenter || !selectedDate) return;
 
         setIsBooking(true);
         try {
+            const dateStr = selectedDate.toISOString();
             // 1. Intelligent Resource Allocation
-            const room = await ResourceManager.autoAllocateRoom(selectedDate);
+            const room = await ResourceManager.autoAllocateRoom(dateStr);
             const therapist = ResourceManager.autoAllocateTherapist(selectedTherapy);
 
             if (!room) {
@@ -100,7 +102,7 @@ export const Scheduler = () => {
                 patientId: currentUser.uid,
                 patientEmail: currentUser.email,
                 therapyId: selectedTherapy,
-                date: selectedDate,
+                date: dateStr,
                 centerId: selectedCenter.id,
                 centerName: selectedCenter.name,
                 roomId: room.roomId,
@@ -117,7 +119,7 @@ export const Scheduler = () => {
             await NotificationService.scheduleNotifications({
                 id: appointmentRef.id,
                 therapyId: selectedTherapy,
-                date: selectedDate
+                date: dateStr
             });
 
             setBookingComplete(true);
@@ -129,7 +131,7 @@ export const Scheduler = () => {
         }
     };
 
-    if (bookingComplete) {
+    if (bookingComplete && selectedDate) {
         return (
             <div className="premium-card" style={{ padding: '3rem', textAlign: 'center', animation: 'fadeIn 0.5s ease-out' }}>
                 <CheckCircle size={64} color="var(--color-primary)" style={{ margin: '0 auto 1.5rem auto' }} />
@@ -147,7 +149,7 @@ export const Scheduler = () => {
                         </div>
                         <div>
                             <span style={{ fontSize: '0.8rem', color: '#888', textTransform: 'uppercase', letterSpacing: '1px' }}>Date</span>
-                            <div style={{ fontWeight: 600 }}>{format(new Date(selectedDate), 'MMMM do, yyyy')}</div>
+                            <div style={{ fontWeight: 600 }}>{format(selectedDate, 'MMMM do, yyyy')}</div>
                         </div>
 
                         <div>
@@ -171,14 +173,14 @@ export const Scheduler = () => {
                 </div>
 
                 <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-                    <button className="btn-primary" onClick={() => { setBookingComplete(false); setStep(1); }}>
+                    <button className="btn-primary" onClick={() => { setBookingComplete(false); setStep(1); setSelectedDate(null); }}>
                         Book Another
                     </button>
                     <button
                         onClick={() => PDFService.generateBookingReceipt({
                             id: lastAppointmentId,
                             therapyId: selectedTherapy,
-                            date: selectedDate,
+                            date: selectedDate.toISOString(),
                             centerName: selectedCenter?.name,
                             roomName: allocatedRoom?.roomName,
                             therapistName: allocatedTherapist?.name
@@ -193,53 +195,51 @@ export const Scheduler = () => {
     }
 
     return (
-        <div className="premium-card" style={{ padding: '2rem' }}>
+        <div className="premium-card">
             {step === 1 && (
-                <div style={{ animation: 'fadeIn 0.3s' }}>
-                    <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                        <CalendarIcon size={24} color="var(--color-primary)" />
+                <div className="animate-fade-in space-y-8 p-6">
+                    <h3 className="flex items-center gap-3 font-serif text-2xl text-brand-deep">
+                        <CalendarIcon className="text-brand-ocean" size={28} />
                         Step 1: Select Therapy & Date
                     </h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '2rem' }}>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Therapy</label>
-                            <div style={{ position: 'relative' }}>
-                                <select
-                                    value={selectedTherapy}
-                                    onChange={(e) => setSelectedTherapy(e.target.value)}
-                                    style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid #ddd', fontSize: '1rem', background: 'white', appearance: 'none' }}
-                                >
-                                    {therapies.map(t => (
-                                        <option key={t.id} value={t.id}>{t.name} ({t.duration})</option>
-                                    ))}
-                                </select>
-                                <Zap size={16} style={{ position: 'absolute', right: '15px', top: '15px', color: '#999' }} />
+
+                    <div className="grid gap-8 lg:grid-cols-2">
+                        {/* Therapy Selection */}
+                        <div className="space-y-4">
+                            <label className="text-sm font-semibold uppercase tracking-wide text-brand-muted">Select Therapy</label>
+                            <div className="grid gap-3">
+                                {therapies.map(t => (
+                                    <div
+                                        key={t.id}
+                                        onClick={() => setSelectedTherapy(t.id)}
+                                        className={`cursor-pointer rounded-xl border p-4 transition-all ${selectedTherapy === t.id ? 'border-brand-ocean bg-brand-ocean/5 ring-1 ring-brand-ocean' : 'border-brand-deep/10 hover:border-brand-ocean/50'}`}
+                                    >
+                                        <div className="font-semibold text-brand-deep">{t.name}</div>
+                                        <div className="text-xs text-brand-muted">{t.duration}</div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500 }}>Preferred Start Date</label>
-                            <input
-                                type="date"
-                                value={selectedDate}
-                                onChange={(e) => setSelectedDate(e.target.value)}
-                                style={{ width: '100%', padding: '1rem', borderRadius: '8px', border: '1px solid #ddd', fontSize: '1rem', fontFamily: 'inherit' }}
-                            />
-                        </div>
+                        {/* Date Selection */}
+                        <div className="space-y-4">
+                            <label className="text-sm font-semibold uppercase tracking-wide text-brand-muted">Preferred Start Date</label>
+                            <Calendar selectedDate={selectedDate} onSelectDate={setSelectedDate} />
 
-                        <button
-                            onClick={handleFindCenters}
-                            className="btn-primary"
-                            style={{ width: '100%', padding: '1.25rem', fontSize: '1.1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
-                        >
-                            Next: Find Nearest Center <MapPin size={18} />
-                        </button>
+                            <button
+                                onClick={handleFindCenters}
+                                disabled={!selectedDate}
+                                className="btn primary w-full mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next: Find Nearest Center <MapPin size={18} className="ml-2" />
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
 
             {step === 2 && (
-                <div style={{ animation: 'fadeIn 0.3s' }}>
+                <div style={{ animation: 'fadeIn 0.3s', padding: '1.5rem' }}>
                     <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.5rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                         <MapPin size={24} color="var(--color-primary)" />
                         Step 2: Select Center
