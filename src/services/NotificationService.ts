@@ -20,12 +20,16 @@ export interface Notification {
 }
 
 export const NotificationService = {
-    // Twilio Backend Integration
+    // Twilio Backend Integration (Vercel Compatible)
     sendSMS: async (phoneNumber: string, message: string): Promise<{ success: boolean; sid?: string }> => {
-        console.log(`[NotificationService] Requesting SMS to ${phoneNumber} via Backend...`);
+        console.log(`[NotificationService] Requesting SMS to ${phoneNumber} via API...`);
+
+        // Use relative path '/api/send-sms' which works automatically on Vercel
+        // OR fallback to localhost if VITE_API_URL is set (for local dev)
+        const apiUrl = (import.meta as any).env.VITE_API_URL || '/api/send-sms';
 
         try {
-            const response = await fetch('http://localhost:3001/api/send-sms', {
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ to: phoneNumber, body: message })
