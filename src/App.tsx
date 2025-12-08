@@ -5,6 +5,8 @@ import { PractitionerPortal } from './pages/PractitionerPortal';
 import { AdminPortal } from './pages/AdminPortal';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
+import { RegisterCenter } from './pages/RegisterCenter';
+import { Profile } from './pages/Profile';
 import { Navigation } from './components/Navigation';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/ProtectedRoute';
@@ -36,6 +38,9 @@ function App() {
               <AdminPortal />
             </ProtectedRoute>
           } />
+
+          <Route path="/register-center" element={<ProtectedRoute allowedRoles={['admin']}><RegisterCenter /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute allowedRoles={['patient', 'practitioner', 'admin']}><Profile /></ProtectedRoute>} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

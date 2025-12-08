@@ -1,7 +1,7 @@
-import { LogOut, LayoutDashboard } from 'lucide-react';
+import { LogOut, LayoutDashboard, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-
+import logo from '../assets/logo.jpg';
 
 export const Navigation = () => {
     const { currentUser, role, logout } = useAuth();
@@ -24,8 +24,8 @@ export const Navigation = () => {
 
     return (
         <nav style={{
-            padding: '1rem 2rem',
-            background: 'rgba(255, 255, 255, 0.8)',
+            padding: '0.5rem 2rem',
+            background: 'rgba(255, 255, 255, 0.9)',
             backdropFilter: 'blur(10px)',
             borderBottom: '1px solid rgba(0,0,0,0.05)',
             position: 'sticky',
@@ -33,32 +33,37 @@ export const Navigation = () => {
             zIndex: 1000,
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            alignItems: 'center',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
         }}>
             <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ width: '40px', height: '40px', background: 'var(--color-primary)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 'bold' }}>AS</div>
-                <h1 style={{ fontSize: '1.25rem', fontFamily: 'var(--font-serif)', color: 'var(--color-text)', margin: 0 }}>Ayursutra</h1>
+                <img src={logo} alt="Ayursutra Logo" style={{ height: '60px', objectFit: 'contain' }} />
             </Link>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <Link to="/" style={{ textDecoration: 'none', color: 'var(--color-text)', fontSize: '0.9rem' }}>Home</Link>
-                <Link to="/therapies" style={{ textDecoration: 'none', color: 'var(--color-text)', fontSize: '0.9rem' }}>Therapies</Link>
+                <Link to="/" style={{ textDecoration: 'none', color: 'var(--color-text-main)', fontSize: '0.9rem' }}>Home</Link>
+                <Link to="/#therapies" style={{ textDecoration: 'none', color: 'var(--color-text-main)', fontSize: '0.9rem' }}>Therapies</Link>
 
                 {currentUser ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                         <Link to={getDashboardLink()} style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-primary)', fontWeight: 500 }}>
                             <LayoutDashboard size={18} /> Dashboard
                         </Link>
-                        <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#666' }}>
-                            <LogOut size={18} /> Logout
-                        </button>
-                        <div style={{ width: '32px', height: '32px', background: '#354f3b', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.8rem' }}>
-                            {currentUser.email?.charAt(0)?.toUpperCase()}
+                        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                            <Link to="/profile" style={{
+                                width: '32px', height: '32px', borderRadius: '50%', background: 'var(--color-primary)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', textDecoration: 'none'
+                            }}>
+                                <User size={18} />
+                            </Link>
                         </div>
+                        <button onClick={handleLogout} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#666' }}>
+                            <LogOut size={18} />
+                        </button>
                     </div>
                 ) : (
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                        <Link to="/login" style={{ textDecoration: 'none', color: 'var(--color-text)', fontWeight: 500 }}>Login</Link>
+                        <Link to="/login" style={{ textDecoration: 'none', color: 'var(--color-text-main)', fontWeight: 500 }}>Login</Link>
                         <Link to="/register" style={{
                             textDecoration: 'none',
                             background: 'var(--color-primary)',

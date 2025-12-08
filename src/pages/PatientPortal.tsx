@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Scheduler } from '../components/Scheduler';
-import { Activity, Droplet, Sun, MessageSquare, Check } from 'lucide-react';
+import { Activity, Droplet, Sun, MessageSquare, Check, FileText } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
+import { PDFService } from '../services/PDFService';
 
 export const PatientPortal = () => {
     const { currentUser } = useAuth();
@@ -11,19 +12,33 @@ export const PatientPortal = () => {
     const [painLevel, setPainLevel] = useState(2);
     const [sent, setSent] = useState(false);
     const [bookedTherapy, setBookedTherapy] = useState<{ name: string, date: string } | null>(null);
+    const [feedbackHistory, setFeedbackHistory] = useState<any[]>([]);
 
-    // Fetch booked therapy (Simple implementation for demo)
+    // Fetch booked therapy and feedback history
     useEffect(() => {
-        const fetchAppointments = async () => {
+        const fetchData = async () => {
             if (!currentUser) return;
-            const q = query(collection(db, 'appointments'), where('patientId', '==', currentUser.uid));
-            const querySnapshot = await getDocs(q);
-            if (!querySnapshot.empty) {
-                const data = querySnapshot.docs[0].data();
+
+            // 1. Appointments
+            const qAppt = query(collection(db, 'appointments'), where('patientId', '==', currentUser.uid));
+            const apptSnapshot = await getDocs(qAppt);
+            if (!apptSnapshot.empty) {
+                const data = apptSnapshot.docs[0].data();
                 setBookedTherapy({ name: data.therapyId || 'Consultation', date: data.date });
             }
+
+            // 2. Feedback History
+            try {
+                // Note: Indexing might be required for orderBy. If it fails, remove orderBy.
+                const qFeedback = query(collection(db, 'feedback'), where('patientId', '==', currentUser.uid));
+                const feedbackSnapshot = await getDocs(qFeedback);
+                const history = feedbackSnapshot.docs.map(doc => doc.data());
+                setFeedbackHistory(history);
+            } catch (e) {
+                console.warn("Could not fetch feedback history", e);
+            }
         };
-        fetchAppointments();
+        fetchData();
     }, [currentUser]);
 
     const handleFeedback = async (e: React.FormEvent) => {
@@ -76,6 +91,16 @@ export const PatientPortal = () => {
                             <div>
                                 <div style={{ fontSize: '0.8rem', color: '#666' }}>Dosha Status</div>
                                 <div style={{ fontWeight: 600 }}>Kapha Balancing</div>
+                            </div>
+                        </div>
+                        <div className="premium-card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', transition: 'transform 0.2s' }}
+                            onClick={() => PDFService.generateMedicalReport(currentUser?.displayName || 'Patient', feedbackHistory)}>
+                            <div style={{ background: '#fce4ec', padding: '1rem', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <FileText color="#c2185b" />
+                            </div>
+                            <div>
+                                <div style={{ fontSize: '0.8rem', color: '#666' }}>Medical Report</div>
+                                <div style={{ fontWeight: 600, color: 'var(--color-primary)' }}>Download PDF</div>
                             </div>
                         </div>
                     </div>

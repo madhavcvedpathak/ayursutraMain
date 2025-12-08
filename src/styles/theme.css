@@ -1,12 +1,17 @@
 :root {
   /* Premium Ayurvedic Palette */
-  --color-primary: #5c7c51; /* Deep Sage Green */
+  --color-primary: #5c7c51;
+  /* Deep Sage Green */
   --color-primary-light: #8da383;
-  --color-secondary: #c4a484; /* Soft Earth/Gold */
-  --color-cream: #f9f7f2; /* Warm Off-White Background */
-  --color-text-main: #2c3e2d; /* Dark Forest Green for text */
+  --color-secondary: #c4a484;
+  /* Soft Earth/Gold */
+  --color-cream: #f9f7f2;
+  /* Warm Off-White Background */
+  --color-text-main: #2c3e2d;
+  /* Dark Forest Green for text */
   --color-text-light: #5f6f60;
-  --color-accent: #d4af37; /* Muted Gold for highlights */
+  --color-accent: #d4af37;
+  /* Muted Gold for highlights */
   --color-error: #b33939;
 
   /* Typography */
@@ -33,7 +38,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-serif);
   font-weight: 600;
   color: var(--color-text-main);
@@ -43,7 +53,7 @@ h1, h2, h3, h4, h5, h6 {
   background: white;
   border-radius: 16px;
   box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
 }
 
@@ -65,4 +75,64 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary:hover {
   background-color: #4a6640;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(92, 124, 81, 0.3);
+}
+
+/* Utilities */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #2c3e2d 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
 }
