@@ -7,23 +7,33 @@ export const Home = () => {
     return (
         <div className="landing-shell">
             {/* Hero Section */}
+            {/* Hero Section */}
             <motion.section
-                className="landing-hero"
+                className="landing-hero relative overflow-hidden text-white"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8 }}
             >
-                <div className="max-w-2xl">
-                    <span className="eyebrow">Ayursutra Health</span>
-                    <h1>Discover the Power of <span className="italic text-brand-teal">Ayurveda</span></h1>
-                    <p className="lede mt-4">
+                {/* Background Image Overlay */}
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=2070&auto=format&fit=crop"
+                        alt="Ayurveda Banner"
+                        className="h-full w-full object-cover opacity-90 brightness-50"
+                    />
+                </div>
+
+                <div className="max-w-2xl relative z-10 p-4">
+                    <span className="eyebrow text-white/80">Ayursutra Health</span>
+                    <h1 className="text-white">Discover the Power of <span className="italic text-brand-teal text-white">Ayurveda</span></h1>
+                    <p className="lede mt-4 text-white/90">
                         Reconnect with nature, rejuvenate your energies, and experience holistic healing rooted in 5,000+ years of trusted knowledge.
                     </p>
-                    <div className="cta-row">
-                        <Link to="/portal" className="btn primary">
+                    <div className="cta-row mt-6">
+                        <Link to="/portal" className="btn bg-brand-teal text-white border-none hover:bg-brand-ocean">
                             Book Consultation
                         </Link>
-                        <a href="#therapies" className="btn outline">
+                        <a href="#therapies" className="btn outline border-white text-white hover:bg-white hover:text-brand-deep">
                             Explore Therapies
                         </a>
                     </div>
@@ -81,11 +91,13 @@ export const Home = () => {
                             <div className="relative h-48 overflow-hidden">
                                 <img
                                     src={
-                                        i === 0 ? "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=1000&auto=format&fit=crop" : // Massage
-                                            i === 1 ? "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=1000&auto=format&fit=crop" : // Relax
-                                                i === 2 ? "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?q=80&w=1000&auto=format&fit=crop" : // Nature
-                                                    i === 3 ? "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=1000&auto=format&fit=crop" : // Oil
-                                                        "https://images.unsplash.com/photo-1576013551627-0cc20b46850e?q=80&w=1000&auto=format&fit=crop" // Vamana default
+                                        // HD+ Unsplash Images for each therapy index
+                                        i === 0 ? "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?q=80&w=1000&auto=format&fit=crop" : // Vamana (Massage/Spa)
+                                            i === 1 ? "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?q=80&w=1000&auto=format&fit=crop" : // Virechana (Relax)
+                                                i === 2 ? "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?q=80&w=1000&auto=format&fit=crop" : // Basti (Nature/Leaf)
+                                                    i === 3 ? "https://images.unsplash.com/photo-1515377905703-c4788e51af15?q=80&w=1000&auto=format&fit=crop" : // Nasya (Oil/Face)
+                                                        i === 4 ? "https://images.unsplash.com/photo-1579126038374-6064e9370f0f?q=80&w=1000&auto=format&fit=crop" : // Raktamokshana (Herbal/Bowls)
+                                                            "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1000&auto=format&fit=crop"         // Vamana Karma (Zen/Meditation)
                                     }
                                     alt={therapy.name}
                                     className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
