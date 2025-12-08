@@ -32,7 +32,7 @@ export const Navigation = () => {
             </Link>
 
             {/* Desktop & Scrollable Mobile Menu Container */}
-            <div className="flex items-center gap-4 overflow-x-auto pb-1 md:pb-0 scrollbar-hide snap-x">
+            <div className="flex items-center gap-4 overflow-x-auto md:overflow-visible pb-1 md:pb-0 scrollbar-hide snap-x md:snap-none">
                 <Link to="/" className="text-brand-deep/80 hover:text-brand-deep font-forum text-lg font-medium px-2 py-1 transition-colors whitespace-nowrap snap-center no-underline">Home</Link>
                 <Link to="/#therapies" className="text-brand-deep/80 hover:text-brand-deep font-forum text-lg font-medium px-2 py-1 transition-colors whitespace-nowrap snap-center no-underline">Therapies</Link>
 
@@ -54,7 +54,7 @@ export const Navigation = () => {
                 ) : (
                     <div className="flex items-center gap-3 snap-center pl-2">
                         <Link to="/login" className="text-brand-deep font-medium hover:text-brand-teal transition-colors whitespace-nowrap no-underline">Login</Link>
-                        <Link to="/register" className="bg-brand-teal text-white px-5 py-2 rounded-full font-medium shadow-brand hover:bg-brand-ocean hover:-translate-y-0.5 transition-all whitespace-nowrap text-sm md:text-base no-underline">
+                        <Link to="/register" className="bg-brand-teal text-white px-5 py-2 rounded-full font-medium shadow-brand hover:bg-brand-ocean hover:-translate-y-0.5 transition-all whitespace-nowrap text-sm md:text-base no-underline cursor-pointer block">
                             Get Started
                         </Link>
                     </div>
