@@ -5,6 +5,7 @@ import { db } from '../firebase';
 import { collection, addDoc, query, where, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
 import { PDFService } from '../services/PDFService';
+import { therapies } from '../data/therapies';
 
 export const PatientPortal = () => {
     const { currentUser } = useAuth();
@@ -26,7 +27,6 @@ export const PatientPortal = () => {
             // 1. Appointments
             const qAppt = query(collection(db, 'appointments'), where('patientId', '==', currentUser.uid));
             const apptSnapshot = await getDocs(qAppt);
-            import { therapies } from '../data/therapies';
 
             // ... inside PatientPortal
             if (!apptSnapshot.empty) {

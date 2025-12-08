@@ -39,6 +39,7 @@ export const PDFService = {
         });
 
         // Footer
+        // Cast to any to access lastAutoTable properly
         const finalY = (doc as any).lastAutoTable.finalY + 20;
         doc.setFontSize(10);
         doc.setTextColor(100, 100, 100);
@@ -125,7 +126,8 @@ export const PDFService = {
         });
 
         // 3. Detailed Financials (Huge Data Mock)
-        doc.text("Detailed Financial Performance (Q4)", 14, doc.lastAutoTable.finalY + 20);
+        // Cast doc to any to access lastAutoTable
+        doc.text("Detailed Financial Performance (Q4)", 14, (doc as any).lastAutoTable.finalY + 20);
 
         const financialRows = [];
         for (let i = 0; i < 30; i++) {
@@ -139,7 +141,7 @@ export const PDFService = {
         }
 
         autoTable(doc, {
-            startY: doc.lastAutoTable.finalY + 25,
+            startY: (doc as any).lastAutoTable.finalY + 25,
             head: [['Date', 'Transaction ID', 'Category', 'Amount', 'Status']],
             body: financialRows,
             theme: 'striped',

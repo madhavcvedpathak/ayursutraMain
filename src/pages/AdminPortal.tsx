@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, query, limit, getDocs } from 'firebase/firestore';
+import { PDFService } from '../services/PDFService';
 
 export const AdminPortal = () => {
     const [smsLogs, setSmsLogs] = useState<any[]>([]);
@@ -30,7 +31,6 @@ export const AdminPortal = () => {
                     <Link to="/register-center" className="btn outline flex items-center gap-2">
                         <MapPin size={18} /> Add Center
                     </Link>
-                    import {PDFService} from '../services/PDFService';
 
                     // ... inside AdminPortal
                     <button
