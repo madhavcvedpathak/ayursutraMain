@@ -36,9 +36,19 @@ export const PractitionerPortal = () => {
         fetchOccupancy();
     }, []);
 
-    // Real-time Appointments
+    // Real-time Appointments (Today & Future)
     useEffect(() => {
-        const q = query(collection(db, 'appointments'), orderBy('date', 'asc'));
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayStr = today.toISOString();
+
+        // Filter: Date >= Today 00:00
+        const q = query(
+            collection(db, 'appointments'),
+            where('date', '>=', todayStr),
+            orderBy('date', 'asc')
+        );
+
         const unsubscribe = onSnapshot(q, (snapshot: any) => {
             const appts = snapshot.docs.map((doc: any) => ({
                 id: doc.id,
@@ -46,7 +56,7 @@ export const PractitionerPortal = () => {
                 patient: doc.data().patientName || 'Unknown Patient',
                 therapy: doc.data().therapyId || 'Consultation',
                 time: doc.data().date ? new Date(doc.data().date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '09:00 AM',
-                room: doc.data().roomName || 'Waiting Area' // Fix: Map roomName from DB to 'room' used in UI
+                room: doc.data().roomName || 'Waiting Area'
             }));
             setAppointments(appts);
         });
@@ -67,7 +77,7 @@ export const PractitionerPortal = () => {
             setSmsStatus('SMS Sent! ID: ' + result.sid);
             setTimeout(() => setSmsStatus(''), 3000);
         } else {
-             setSmsStatus('SMS Failed. Check Console.');
+            setSmsStatus('SMS Failed. Check Console.');
         }
     };
 
@@ -200,8 +210,8 @@ export const PractitionerPortal = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '2rem' }}>
                     {/* Left Col: Schedule */}
                     <div className="premium-card" style={{ padding: '1.5rem', height: 'fit-content' }}>
-                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-                            <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Today's Queue</h3>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                            <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Upcoming Queue</h3>
                             <Calendar size={20} color="var(--color-primary)" />
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
