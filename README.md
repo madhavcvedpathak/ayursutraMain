@@ -1,73 +1,66 @@
-# React + TypeScript + Vite
+# Ayursutra - Modern Ayurveda Management Platform 🌿
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ayursutra is a premium, full-stack clinic management system designed for Ayurvedic practitioners and franchise centers. It combines ancient wisdom with modern technology, featuring real-time appointment scheduling, inventory tracking, telemedicine capabilities, and a Progressive Web App (PWA) interface.
 
-Currently, two official plugins are available:
+## 🚀 Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+*   **Premium Scheduling**: Intelligent booking system with "Best Muhurat" logic and resource allocation (Room/Therapist).
+*   **Role-Based Portals**:
+    *   **Patient**: Book therapies, view medical history, innovative "Adverse Reaction" safety protocol.
+    *   **Practitioner**: Live queue management, "Upcoming" appointments filter, automated SMS/Call triggers.
+    *   **Admin**: Comprehensive dashboard for Revenue, Inventory (Stock tracking), and Franchise management.
+*   **PWA Mobile App**: Installable on iOS/Android with offline capabilities and native-like performance.
+*   **Notifications**: Automated SMS (via Twilio/Mock) and Voice Call reminders for Pre/Post-procedure care.
+*   **Reports**: PDF generation for medical reports, booking receipts, and financial analytics.
 
-## React Compiler
+## 🛠️ Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+*   **Frontend**: React (Vite), TypeScript, Tailwind CSS
+*   **Design**: Custom "Premium" CSS (Glassmorphism, Parallax), Lucide Icons, Recharts
+*   **Backend / Database**: Firebase Firestore (NoSQL), Firebase Auth
+*   **Serverless**: Vercel Serverless Functions (`api/`) for secure Twilio integration.
+*   **PWA**: `vite-plugin-pwa` for Service Worker & Manifest generation.
 
-## Expanding the ESLint configuration
+## 📦 Installation & Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/madhavcvedpathak/ayursutraMain.git
+    cd panchkarma
+    ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+3.  **Environment Variables**:
+    Create a `.env` file in the root with your Firebase and Twilio credentials:
+    ```env
+    VITE_FIREBASE_API_KEY=your_key
+    VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+    # ... other firebase config
+    TWILIO_ACCOUNT_SID=your_sid
+    TWILIO_AUTH_TOKEN=your_token
+    TWILIO_PHONE_NUMBER=your_number
+    ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+4.  **Run Development Server**:
+    ```bash
+    npm run dev
+    ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+5.  **Build for Production**:
+    ```bash
+    npm run build
+    ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 📱 Mobile PWA Instructions
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+1.  Deploy the application (e.g., to Vercel).
+2.  Open the URL on your mobile browser (Chrome/Safari).
+3.  Tap "Add to Home Screen" to install Ayursutra as a native-like app.
+
+## 📄 License
+
+Proprietary software developed for Ayursutra Clinics.

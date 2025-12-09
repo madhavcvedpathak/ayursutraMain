@@ -9,6 +9,7 @@ import { ResourceManager } from '../services/ResourceManager';
 import { NotificationService } from '../services/NotificationService';
 import { PDFService } from '../services/PDFService';
 import { calculateDistance, getUserLocation } from '../utils/geo';
+import { PaymentModal } from './PaymentModal';
 import { Calendar } from './Calendar';
 
 interface Center {
@@ -37,6 +38,7 @@ export const Scheduler = () => {
     const [isLoadingCenters, setIsLoadingCenters] = useState(false);
     const [isBooking, setIsBooking] = useState(false);
     const [bookingComplete, setBookingComplete] = useState(false);
+    const [showPayment, setShowPayment] = useState(false);
 
     // Auto-Allocation State
     const [allocatedRoom, setAllocatedRoom] = useState<{ roomId: string, roomName: string } | null>(null);
@@ -99,15 +101,21 @@ export const Scheduler = () => {
         }
     };
 
-    const handleFinalBooking = async () => {
+    const handleInitiateBooking = () => {
         if (!currentUser || !selectedCenter || !selectedDate) return;
 
         if (!patientPhone || patientPhone.length < 10) {
             alert("Please provide a valid phone number for appointment updates.");
             return;
         }
+        setShowPayment(true);
+    };
 
+    const handlePaymentSuccess = async (txnId: string) => {
+        setShowPayment(false);
         setIsBooking(true);
+        if (!currentUser || !selectedCenter || !selectedDate) return;
+
         try {
             const dateStr = selectedDate.toISOString();
             // 1. Intelligent Resource Allocation
@@ -136,7 +144,9 @@ export const Scheduler = () => {
                 roomName: room.roomName,
                 therapistId: therapist.id,
                 therapistName: therapist.name,
-                status: 'Scheduled',
+                status: 'Confirmed',
+                paymentStatus: 'Paid',
+                transactionId: txnId,
                 createdAt: new Date().toISOString()
             });
 
@@ -338,14 +348,23 @@ export const Scheduler = () => {
                             Back
                         </button>
                         <button
-                            onClick={handleFinalBooking}
+                            onClick={handleInitiateBooking}
                             disabled={!selectedCenter || isBooking || !patientPhone}
                             className="btn primary"
                             style={{ flex: 2, padding: '1rem', fontSize: '1.05rem', opacity: (!selectedCenter || isBooking || !patientPhone) ? 0.7 : 1 }}
                         >
-                            {isBooking ? 'Processing...' : 'Confirm Booking'}
+                            Pay & Confirm
                         </button>
                     </div>
+
+                    {showPayment && (
+                        <PaymentModal
+                            amount={therapies.find(t => t.id === selectedTherapy)?.price || 2000}
+                            description={`Booking for ${therapies.find(t => t.id === selectedTherapy)?.name || 'Therapy'}`}
+                            onSuccess={handlePaymentSuccess}
+                            onClose={() => setShowPayment(false)}
+                        />
+                    )}
                 </div>
             )}
         </div>
