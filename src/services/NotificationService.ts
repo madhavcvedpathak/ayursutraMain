@@ -60,9 +60,54 @@ export const NotificationService = {
                 return { success: false };
             }
 
-        } catch (e: any) {
             console.error("[NotificationService] Connection to SMS Server failed", e);
             // Log this client-side failure too if possible, or just alert
+            return { success: false };
+        }
+    },
+
+    // Twilio Voice Call Integration
+    makeBotCall: async (phoneNumber: string, message: string): Promise<{ success: boolean; sid?: string }> => {
+        console.log(`[NotificationService] Requesting Voice Call to ${phoneNumber}...`);
+
+        // Use relative path for Vercel
+        const apiUrl = (import.meta as any).env.VITE_API_URL_VOICE || '/api/make-call';
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: phoneNumber,
+                    message: message.substring(0, 500) // Truncate for TwiML limits if needed
+                })
+            });
+
+            const data = await response.json();
+
+            // Log attempt
+            await addDoc(collection(db, 'call_logs'), {
+                phoneNumber,
+                message,
+                status: data.success ? 'Initiated' : 'Failed',
+                provider: 'Twilio-Voice',
+                timestamp: new Date().toISOString(),
+                sid: data.sid || null,
+                error: data.error || null
+            });
+
+            if (!response.ok) throw new Error(data.error || `HTTP Error ${response.status}`);
+
+            if (data.success) {
+                console.log(`[NotificationService] Call Initiated! SID: ${data.sid}`);
+                return { success: true, sid: data.sid };
+            } else {
+                console.error(`[NotificationService] Call Failed: ${data.error}`);
+                return { success: false };
+            }
+
+        } catch (e: any) {
+            console.error("[NotificationService] Connection to Voice Server failed", e);
             return { success: false };
         }
     },

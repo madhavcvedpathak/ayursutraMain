@@ -55,7 +55,7 @@ export const PractitionerPortal = () => {
 
     const handleSendSMS = async (type: 'pre' | 'post') => {
         if (!selectedPatient) return;
-        setSmsStatus('Sending...');
+        setSmsStatus('Sending SMS...');
 
         const message = type === 'pre'
             ? NotificationService.generatePreProcedureMessage('Vamana', 'Tomorrow')
@@ -64,14 +64,33 @@ export const PractitionerPortal = () => {
         const result = await NotificationService.sendSMS('+919876543210', message);
 
         if (result.success) {
-            setSmsStatus('Sent! ID: ' + result.sid);
+            setSmsStatus('SMS Sent! ID: ' + result.sid);
             setTimeout(() => setSmsStatus(''), 3000);
+        } else {
+             setSmsStatus('SMS Failed. Check Console.');
+        }
+    };
+
+    const handleCallPatient = async () => {
+        if (!selectedPatient) return;
+        setSmsStatus('Initiating Call...'); // Reusing status state for simplicity
+
+        // Short message for TTS (Text-to-Speech)
+        const voiceMsg = "Namaste. This is a reminder from Ayursutra Center. Your Vamana therapy is scheduled for tomorrow. Please remember to drink warm water and sleep early. Do not eat heavy food tonight. We look forward to seeing you. Thank you.";
+
+        const result = await NotificationService.makeBotCall('+919876543210', voiceMsg);
+
+        if (result.success) {
+            setSmsStatus('Call Ringing! SID: ' + result.sid);
+            setTimeout(() => setSmsStatus(''), 5000);
+        } else {
+            setSmsStatus('Call Failed. Check Console.');
         }
     };
 
     return (
         <div style={{ padding: '2rem', maxWidth: '1400px', margin: '0 auto' }}>
-            {/* Header */}
+            {/* ... (Header) ... */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem' }}>
                 <h2 style={{ fontFamily: 'var(--font-serif)', margin: 0 }}>Practitioner Command Center</h2>
 
@@ -181,7 +200,7 @@ export const PractitionerPortal = () => {
                 <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '2rem' }}>
                     {/* Left Col: Schedule */}
                     <div className="premium-card" style={{ padding: '1.5rem', height: 'fit-content' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                             <h3 style={{ fontSize: '1.2rem', margin: 0 }}>Today's Queue</h3>
                             <Calendar size={20} color="var(--color-primary)" />
                         </div>
@@ -241,9 +260,20 @@ export const PractitionerPortal = () => {
                                         >
                                             <Send size={16} /> Send Recovery SMS
                                         </button>
+                                        {/* VOICE CALL BUTTON */}
+                                        <button
+                                            onClick={handleCallPatient}
+                                            style={{
+                                                flex: 1, padding: '0.75rem', borderRadius: '6px', border: 'none',
+                                                background: 'linear-gradient(135deg, #1565c0 0%, #1976d2 100%)', color: 'white', display: 'flex', justifyContent: 'center', gap: '0.5rem', cursor: 'pointer',
+                                                boxShadow: '0 4px 10px rgba(21, 101, 192, 0.2)'
+                                            }}
+                                        >
+                                            <MessageCircle size={16} /> Auto-Call Bot
+                                        </button>
                                     </div>
                                     {smsStatus && (
-                                        <div style={{ fontSize: '0.9rem', color: smsStatus.includes('Sent') ? 'green' : '#666', textAlign: 'center' }}>
+                                        <div style={{ fontSize: '0.9rem', color: smsStatus.includes('Sent') || smsStatus.includes('Ringing') ? 'green' : '#666', textAlign: 'center', fontWeight: 600 }}>
                                             {smsStatus}
                                         </div>
                                     )}
