@@ -103,25 +103,73 @@ export const NotificationService = {
     },
 
     generatePreProcedureMessage: (therapyName: string, date: string) => {
-        return `✅ Booking Successful! Your ${therapyName} is confirmed for ${date} at Ayursutra Center.
+        return `🌟 BOOKING CONFIRMED 🌟
+Your appointment for ${therapyName} (Shodhan Therapy) is confirmed at Ayursutra Center on ${date}.
 
-PRE-CARE (Purvakarma):
-1. Hydration: Drink warm water throughout the day.
-2. Diet: Eat light, warm, fresh meals (Sattvic diet). Avoid fried/processed food.
-3. Snehapana: Start medicated ghee intake if prescribed.
-4. Rest: Ensure 8 hours of sleep.
+🛑 IMPORTANT PRE-CARE (Purvakarma):
+To ensure the maximum benefit and safety of your detox, strictly adhere to the following:
 
-Please arrive 15 mins early. 🙏`;
+1. DIET (Ahara):
+   - Eat only when hungry.
+   - Consume warm, liquid/semi-solid meals (e.g., Khichdi, warm soups).
+   - STRICTLY AVOID: Curd, pickles, fried items, cold drinks, sweets, and heavy greasy food.
+   - Stop eating by 7:30 PM the night before.
+
+2. LIFESTYLE (Vihara):
+   - Drink lukewarm water throughout the day.
+   - Avoid sleeping during the day (Divaswapna).
+   - Protect yourself from cold breezes and direct sun.
+   - Maintain sexual abstinence (Brahmacharya) 2 days prior.
+
+3. SNEHAPANA (Internal Oleation):
+   - If you have been prescribed medicated ghee, take it exactly at 6:00 AM on empty stomach with warm water.
+   - Do not eat anything until you feel genuine hunger.
+
+4. MENTAL STATE:
+   - Keep your mind calm and stress-free. Anxiety can affect the detox process.
+
+⚠️ REPORTING: If you have fever, menstruation, or extreme fatigue, please call us to reschedule.
+
+Please arrive 20 minutes early for vitals check. 
+📍 Location: Ayursutra Center
+📞 Helpline: +91-9876543210
+🙏 Namaste.`;
     },
 
     generatePostProcedureMessage: (therapyName: string) => {
-        return `🌿 Post-${therapyName} Care (Paschatkarma):
+        return `⛔ POST-THERAPY CARE (Paschatkarma) - CRITICAL ⛔
 
-1. Diet: Follow 'Samsarjana Krama' (Graduated Diet) strictly - start with rice water (Peja).
-2. Lifestyle: Avoid cold wind, AC, and intense physical exertion for 3 days.
-3. Rest: Complete rest is essential to restore Agni (digestive fire).
-4. Hydration: Sip warm ginger water.
+Your ${therapyName} procedure was successful. Your body's digestive fire (Agni) is currently very low, like a covered ember. You must nurse it back to strength slowly.
 
-We wish you a healing recovery. - Ayursutra`;
+🗓️ 3-DAY RECOVERY PLAN (Samsarjana Krama):
+
+DAY 1 (Today):
+- Meal 1 (Evening): Drink only the thin upper water of rice gruel (Manda). No solid rice.
+- Fluids: Sip LUKEWARM ginger water only. NO cold water.
+
+DAY 2 (Tomorrow):
+- Morning: Diluted rice gruel (Peja).
+- Evening: Thicker rice gruel with a pinch of rocksalt and ghee (Vilepi).
+
+DAY 3 (Day After):
+- Morning: Plain cooked rice with fluid (Odana).
+- Evening: Rice with mild green gram soup (Yusha).
+
+🚫 STRICT PROHIBITIONS (For 7 Days):
+- No cold water showers (Hot water only).
+- No AC or Fan draft directly on body.
+- No Travel, long sitting, or loud speaking.
+- No Day sleeping.
+- No Sexual activity or heavy exercise.
+
+✅ DO'S:
+- Rest in a calm, dimly lit room.
+- Wear warm, comfortable cotton clothes.
+- Listen to soothing music or mantra chanting.
+
+If you experience dizziness, heavy bleeding, or severe weakness, contact us IMMEDIATELY.
+
+Heal Well.
+- Dr. Madhav, Ayursutra Center`;
     }
 };
