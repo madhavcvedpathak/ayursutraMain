@@ -103,10 +103,25 @@ export const NotificationService = {
     },
 
     generatePreProcedureMessage: (therapyName: string, date: string) => {
-        return `Namaste. Your ${therapyName} (Shodhan) is scheduled for ${date}. Start 'Snehapana' (Oleation) as prescribed. Avoid heavy meals. - Ayursutra Center`;
+        return `✅ Booking Successful! Your ${therapyName} is confirmed for ${date} at Ayursutra Center.
+
+PRE-CARE (Purvakarma):
+1. Hydration: Drink warm water throughout the day.
+2. Diet: Eat light, warm, fresh meals (Sattvic diet). Avoid fried/processed food.
+3. Snehapana: Start medicated ghee intake if prescribed.
+4. Rest: Ensure 8 hours of sleep.
+
+Please arrive 15 mins early. 🙏`;
     },
 
     generatePostProcedureMessage: (therapyName: string) => {
-        return `Pranams. Post-${therapyName}, strictly follow 'Samsarjana Krama' (Graduated Diet). Avoid cold water & wind. Rest well to restore Agni. - Ayursutra Center`;
+        return `🌿 Post-${therapyName} Care (Paschatkarma):
+
+1. Diet: Follow 'Samsarjana Krama' (Graduated Diet) strictly - start with rice water (Peja).
+2. Lifestyle: Avoid cold wind, AC, and intense physical exertion for 3 days.
+3. Rest: Complete rest is essential to restore Agni (digestive fire).
+4. Hydration: Sip warm ginger water.
+
+We wish you a healing recovery. - Ayursutra`;
     }
 };
