@@ -48,6 +48,10 @@ export const NotificationService = {
                 error: data.error || null
             });
 
+            if (!response.ok) {
+                throw new Error(data.error || `HTTP Error ${response.status}`);
+            }
+
             if (data.success) {
                 console.log(`[NotificationService] SMS Dispatch Success! SID: ${data.sid}`);
                 return { success: true, sid: data.sid };
@@ -58,6 +62,7 @@ export const NotificationService = {
 
         } catch (e: any) {
             console.error("[NotificationService] Connection to SMS Server failed", e);
+            // Log this client-side failure too if possible, or just alert
             return { success: false };
         }
     },

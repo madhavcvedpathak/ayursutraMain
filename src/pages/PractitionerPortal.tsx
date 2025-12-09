@@ -45,8 +45,8 @@ export const PractitionerPortal = () => {
                 ...doc.data(),
                 patient: doc.data().patientName || 'Unknown Patient',
                 therapy: doc.data().therapyId || 'Consultation',
-                time: doc.data().time || '09:00 AM',
-                room: doc.data().room || 'Waiting Area'
+                time: doc.data().date ? new Date(doc.data().date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '09:00 AM',
+                room: doc.data().roomName || 'Waiting Area' // Fix: Map roomName from DB to 'room' used in UI
             }));
             setAppointments(appts);
         });
