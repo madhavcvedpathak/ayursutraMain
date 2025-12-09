@@ -1,10 +1,10 @@
-import { Users, DollarSign, Activity, Settings as SettingsIcon, MapPin, Package, RefreshCw } from 'lucide-react';
+import { Users, DollarSign, Activity, MapPin, Package, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, query, limit, getDocs, orderBy } from 'firebase/firestore';
 import { PDFService } from '../services/PDFService';
-import { InventoryService, InventoryItem } from '../services/InventoryService';
+import { InventoryService, type InventoryItem } from '../services/InventoryService';
 import { InventoryPieChart, RevenueTrendChart } from '../components/ReportCharts';
 import { therapies } from '../data/therapies';
 
@@ -78,6 +78,10 @@ export const AdminPortal = () => {
         name: i.name,
         value: i.stockLevel
     }));
+
+    if (loading) {
+        return <div className="flex h-screen items-center justify-center text-brand-primary">Loading Dashboard...</div>;
+    }
 
     return (
         <div className="app-shell" style={{ maxWidth: '1400px', margin: '0 auto', padding: '2rem' }}>

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Calendar, Clipboard, LayoutDashboard, MapPin, MessageCircle, Send } from 'lucide-react';
 import { MonthlyTreatmentChart, TreatmentDistributionChart } from '../components/ReportCharts';
 import { db } from '../firebase';
-import { collection, query, getDocs, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { collection, query, getDocs, orderBy, limit, onSnapshot, where } from 'firebase/firestore';
 import { NotificationService } from '../services/NotificationService';
 import { ResourceManager, THERAPY_ROOMS } from '../services/ResourceManager';
 
