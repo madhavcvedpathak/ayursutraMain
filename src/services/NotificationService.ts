@@ -59,7 +59,7 @@ export const NotificationService = {
                 console.error(`[NotificationService] SMS Dispatch Failed: ${data.error}`);
                 return { success: false };
             }
-
+        } catch (e: any) {
             console.error("[NotificationService] Connection to SMS Server failed", e);
             // Log this client-side failure too if possible, or just alert
             return { success: false };
